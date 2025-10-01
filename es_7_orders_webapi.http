@@ -1,0 +1,6 @@
+@es_7_orders_webapi_HostAddress = http://localhost:5199
+
+GET {{es_7_orders_webapi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
