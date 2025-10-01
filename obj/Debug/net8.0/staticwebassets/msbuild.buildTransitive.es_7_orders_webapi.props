@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\es_7_orders_webapi.props" />
+</Project>

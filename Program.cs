@@ -14,24 +14,34 @@ using var db = new Customers();
 Console.WriteLine($"Inserting the db in '{db.path_db}'");
 
 // inserting the db entries
-db.Add(new Customer("Alessandro", "Alessandro@gmail.com", "09/10/2007"));
-db.Add(new Customer("Zheng", "Zheng@gmail.com", "26/04/2007"));
-db.SaveChanges(); // saving...
+// db.Add(new Customer("Alessandro", "Alessandro@gmail.com", "09/10/2007"));
+// db.Add(new Customer("Zheng", "Zheng@gmail.com", "26/04/2007"));
+// db.SaveChanges(); // saving...
 
-// List<Product> products = new List<Product>
-// {
-//     new Product("Animal Farm", 10, "Book"),
-//     new Product("Acer", 1000, "Laptop"),
-//     new Product("Apple", 1, "Fruits")
-// };
-
-app.MapGet("/products", () => // handling GET request
+// -- API interactions --
+string endpoint = "/customers";
+app.MapGet(endpoint, () => // handling GET request
 {
     return Results.Ok(db.Customers_db);
 })
-app.MapGet("/customers", () =>)
-
-// .WithName("getproducts")
 .WithOpenApi();
+app.MapPost(endpoint, (Customer customer) =>
+{
+    try
+    {
+        db.Add(customer);
+        db.SaveChanges();
+        return Results.Ok("User inserted succesfully");
+    }
+    catch (Exception e)
+    {
+        return Results.BadRequest($"User Error! {e.ToString()}"); 
+    }
+
+})
+.WithOpenApi();
+// .WithName("getproducts")
 
 app.Run();
+
+// {"name":"Paolo", "email":"Paolo@gmail.com","dateOfBirth":"04/02/2004"}

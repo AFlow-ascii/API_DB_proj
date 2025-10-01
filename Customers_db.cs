@@ -11,18 +11,8 @@ public class Customers : DbContext
     {
         var folder = Environment.SpecialFolder.LocalApplicationData;
         var path = Environment.GetFolderPath(folder);
-        path_db = System.IO.Path.Join(path, "Customers.db");
+        path_db = System.IO.Path.Join(path, "APICustomers.db");
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={path_db}");
-    // protected override void OnModelCreating(ModelBuilder modelBuilder)
-    // {
-    //     modelBuilder.Entity<Customer>()
-    //     .HasMany(e => e.Orders)
-    //     .WithOne(e => e.Customer)
-    //     .HasForeignKey(e => e.Customer_id)
-    //     .HasPrincipalKey(e => e.Id);
-
-    // }
-
 }
