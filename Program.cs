@@ -25,23 +25,36 @@ app.MapGet(endpoint, () => // handling GET request
     return Results.Ok(db.Customers_db);
 })
 .WithOpenApi();
-app.MapPost(endpoint, (Customer customer) =>
+app.MapPost(endpoint, (Customer customer) => // handling POST request
 {
     try
     {
         db.Add(customer);
         db.SaveChanges();
-        return Results.Ok("User inserted succesfully");
+        return Results.Ok("User inserted succesfully!");
     }
     catch (Exception e)
     {
-        return Results.BadRequest($"User Error! {e.ToString()}"); 
+        return Results.BadRequest($"User Error! {e.ToString()}");
     }
 
 })
 .WithOpenApi();
-// .WithName("getproducts")
-
+app.MapDelete("/customers/{id:int}", (int id) => // handling DELETE request
+{
+    try
+    {
+        var find = db.Customers_db.Find(id);
+        db.Customers_db.Remove(find);
+        db.SaveChanges();
+        return Results.Ok("User deleted succesfully!");
+    }
+    catch (Exception e)
+    {
+        return Results.BadRequest($"User Error! {e.ToString()}");
+    }
+})
+.WithOpenApi();
 app.Run();
 
 // {"name":"Paolo", "email":"Paolo@gmail.com","dateOfBirth":"04/02/2004"}
