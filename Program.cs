@@ -286,12 +286,3 @@ class Program
         return BitConverter.ToString(hashbytes);
     }
 }
-
-// {"name":"Animal Farm", "autor":"George Orwell", "dateOfRelease":"17/08/1945"}
-// {"username":"Alessandro", "password":"1234"}
-// 
-    // {
-    //     "title":"Animal Farm",
-    //     "autor":"George Orwell",
-    //     "dateOfRelease": "17/08/1945"
-    // }
