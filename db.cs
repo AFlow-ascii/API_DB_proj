@@ -1,17 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
-public class Customers : DbContext
+public class Books : DbContext
 {
-    public DbSet<Customer> Customers_db { get; set; }
+    public DbSet<Book> Book_db { get; set; }
     public DbSet<User> User_db { get; set; }
     public string path_db { get; }
 
-    public Customers()
+    public Books()
     {
         var folder = Environment.SpecialFolder.LocalApplicationData;
         var path = Environment.GetFolderPath(folder);
-        path_db = System.IO.Path.Join(path, "APICustomers.db");
+        path_db = System.IO.Path.Join(path, "APIBook_db.db");
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={path_db}");

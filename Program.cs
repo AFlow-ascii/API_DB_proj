@@ -41,11 +41,11 @@ class Program
         app.UseAuthorization();
 
         // -- DB SETTINGS --
-        using var db = new Customers();
+        using var db = new Books();
         Console.WriteLine($"Inserting the db in '{db.path_db}'");
 
         // inserting the db entries
-        if (!db.Customers_db.Any())
+        if (!db.Book_db.Any())
         {
             DBDefault();
         }
@@ -56,83 +56,83 @@ class Program
             return Results.Ok("DB resetted succesfully!");
         })
         .WithOpenApi();
-        
+
         // -- API "customers" interactions --
-        string custom_endpoint = "/customers";
-        app.MapGet(custom_endpoint, () => // handling GET request
+        string book_endpoint = "/books";
+        app.MapGet(book_endpoint, () => // handling GET request
         {
-            return Results.Ok(db.Customers_db);
+            return Results.Ok(db.Book_db);
         })
         .RequireAuthorization()
         .WithOpenApi();
-        app.MapGet("/customers/{id:int}", (int id) => // handling GET "id" request
+        app.MapGet("/books/{id:int}", (int id) => // handling GET "id" request
         {
             try
             {
-                var find = db.Customers_db.Find(id);
+                var find = db.Book_db.Find(id);
                 return Results.Ok(find);
             }
             catch (Exception e)
             {
-                return Results.BadRequest($"Customer Error 404 not found! {e.ToString()}");
+                return Results.BadRequest($"book Error 404 not found! {e.ToString()}");
             }
         })
         .RequireAuthorization()
         .WithOpenApi();
 
-        app.MapPost(custom_endpoint, (Customer customer) => // handling POST request
+        app.MapPost(book_endpoint, (Book book) => // handling POST request
         {
             try
             {
-                db.Add(customer);
+                db.Add(book);
                 db.SaveChanges();
-                return Results.Ok("Customer inserted succesfully!");
+                return Results.Ok("book inserted succesfully!");
             }
             catch (Exception e)
             {
-                return Results.BadRequest($"Customer Error! {e.ToString()}");
+                return Results.BadRequest($"book Error! {e.ToString()}");
             }
 
         })
         .RequireAuthorization()
         .WithOpenApi();
 
-        app.MapDelete("/customers/{id:int}", (int id) => // handling DELETE request
+        app.MapDelete("/books/{id:int}", (int id) => // handling DELETE request
         {
             try
             {
-                var find = db.Customers_db.Find(id);
-                db.Customers_db.Remove(find);
+                var find = db.Book_db.Find(id);
+                db.Book_db.Remove(find);
                 db.SaveChanges();
-                return Results.Ok("Customer deleted succesfully!");
+                return Results.Ok("book deleted succesfully!");
             }
             catch (Exception e)
             {
-                return Results.BadRequest($"Customer Error! {e.ToString()}");
+                return Results.BadRequest($"book Error! {e.ToString()}");
             }
         })
         .RequireAuthorization()
         .WithOpenApi();
 
-        app.MapPut("/customers/{id:int}", (int id, Customer customer) => // handling PUT request
+        app.MapPut("/books/{id:int}", (int id, Book book) => // handling PUT request
         {
             try
             {
-                var find = db.Customers_db.Find(id);
-                if (customer.Name != null)
+                var find = db.Book_db.Find(id);
+                if (book.Title != null)
                 {
-                    find.Name = customer.Name;
+                    find.Title = book.Title;
                 }
-                else if (customer.Email != null)
+                else if (book.Autor != null)
                 {
-                    find.Email = customer.Email;
+                    find.Autor = book.Autor;
                 }
-                else if (customer.DateOfBirth != null)
+                else if (book.DateOfRelease != null)
                 {
-                    find.DateOfBirth = customer.DateOfBirth;
+                    find.DateOfRelease = book.DateOfRelease;
                 }
                 db.SaveChanges();
-                return Results.Ok("Customer updated succesfully!");
+                return Results.Ok("book updated succesfully!");
             }
             catch (Exception e)
             {
@@ -209,15 +209,15 @@ class Program
 
     static void DBDefault()
     {
-        using var customer_db = new Customers();
+        using var book_db = new Books();
 
         Console.WriteLine("Resetting the db...");
-        customer_db.Database.EnsureDeleted();
-        customer_db.Database.EnsureCreated();
+        book_db.Database.EnsureDeleted();
+        book_db.Database.EnsureCreated();
         Console.WriteLine("Inserting the default entries...");
-        customer_db.Add(new Customer("Alessandro", "Alessandro@gmail.com", "09/10/2007"));
-        customer_db.Add(new Customer("Zheng", "Zheng@gmail.com", "26/04/2007"));
-        customer_db.SaveChanges(); // saving...
+        book_db.Add(new Book("Animal Farm", "George Orwell", "17/08/1945"));
+        book_db.Add(new Book("1984", "George Orwell", "08/05/1949"));
+        book_db.SaveChanges(); // saving...
     }
     static string HashSha256(string s)
     {
@@ -225,6 +225,3 @@ class Program
         return BitConverter.ToString(hashbytes);
     }
 }
-
-// {"name": "Paolo", "email": "Paolo@gmail.com", "dateOfBirth": "15/07/2002"}
-// {"username": "Paolo", "password": "1234"}
