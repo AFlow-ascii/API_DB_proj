@@ -14,9 +14,16 @@ using var db = new Customers();
 Console.WriteLine($"Inserting the db in '{db.path_db}'");
 
 // inserting the db entries
-// db.Add(new Customer("Alessandro", "Alessandro@gmail.com", "09/10/2007"));
-// db.Add(new Customer("Zheng", "Zheng@gmail.com", "26/04/2007"));
-// db.SaveChanges(); // saving...
+if (!db.Customers_db.Any())
+{
+    Console.WriteLine("Resetting the db...");
+    db.Database.EnsureDeleted(); 
+    db.Database.EnsureCreated();
+    Console.WriteLine("Inserting the default entries...");
+    db.Add(new Customer("Alessandro", "Alessandro@gmail.com", "09/10/2007"));
+    db.Add(new Customer("Zheng", "Zheng@gmail.com", "26/04/2007"));
+    db.SaveChanges(); // saving...
+}
 
 // -- API interactions --
 string endpoint = "/customers";
@@ -82,5 +89,3 @@ app.MapPut("/customers/{id:int}", (int id, Customer customer) => // handling PUT
 })
 .WithOpenApi();
 app.Run();
-
-// {"name":"Paolo", "email":"Paolo@gmail.com","dateOfBirth":"04/02/2004"}
