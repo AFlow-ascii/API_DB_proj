@@ -55,6 +55,32 @@ app.MapDelete("/customers/{id:int}", (int id) => // handling DELETE request
     }
 })
 .WithOpenApi();
+app.MapPut("/customers/{id:int}", (int id, Customer customer) => // handling PUT request
+{
+    try
+    {
+        var find = db.Customers_db.Find(id);
+        if (customer.Name != null)
+        {
+            find.Name = customer.Name;
+        }
+        else if (customer.Email != null)
+        {
+            find.Email = customer.Email;
+        }
+        else if (customer.DateOfBirth != null)
+        {
+            find.DateOfBirth = customer.DateOfBirth;
+        }
+        db.SaveChanges();
+        return Results.Ok("User updated succesfully!");
+    }
+    catch (Exception e)
+    {
+        return Results.BadRequest($"User Error! {e.ToString()}");
+    }
+})
+.WithOpenApi();
 app.Run();
 
 // {"name":"Paolo", "email":"Paolo@gmail.com","dateOfBirth":"04/02/2004"}
