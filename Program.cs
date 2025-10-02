@@ -9,15 +9,15 @@ using System.IdentityModel.Tokens.Jwt;
 
 class Program
 {
-    public static string secret_key = BitConverter.ToString(RandomNumberGenerator.GetBytes(256));
+    public static string secret_key = BitConverter.ToString(RandomNumberGenerator.GetBytes(256)); // Generating a secure random key for the JW tokens
     static void Main(string[] args)
     {
         // -- API SETTINGS -- 
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
+        // builder.Services.AddSwaggerGen();
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer( // this set up the JWT auth mode
             Options =>
             {
                 Options.TokenValidationParameters = new TokenValidationParameters
@@ -26,9 +26,9 @@ class Program
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = "crazydomain.com",
+                    ValidIssuer = "crazydomain.com", 
                     ValidAudience = "crazydomain.com",
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret_key))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret_key)) // take use of the secret key (generated before)
                 };
             }
         );
@@ -41,11 +41,11 @@ class Program
         app.UseAuthorization();
 
         // -- DB SETTINGS --
-        using var db = new Books();
+        using var db = new Users(); // all the DB is a "tree" that fall from the "user" table
         Console.WriteLine($"Inserting the db in '{db.path_db}'");
 
         // inserting the db entries
-        if (!db.Book_db.Any())
+        if (!db.User_db.Any())
         {
             DBDefault();
         }
@@ -143,6 +143,38 @@ class Program
         .WithOpenApi();
         // -- end of API "customers" interactions --
 
+        // -- API order interactions --
+        string order_endpoint = "/orders";
+        app.MapPost(order_endpoint, (Order order, string username) =>
+        {
+            var user = db.User_db.FirstOrDefault(u => u.UserName == username);
+            user.Orders.Add(order);
+
+            return Results.Ok("Order inserted succesfully!");
+        })
+        .RequireAuthorization()
+        .WithOpenApi();
+        app.MapGet(order_endpoint, () =>
+        {
+            var orders = db.Order_db
+            .Include(o => o.Books)
+            .Select(o => new // organizing the output like this to prevent endless issues
+            {
+                o.Id,
+                Books = o.Books.Select(b => new
+                {
+                    b.Id,
+                    b.Title,
+                    b.Autor,
+                    b.DateOfRelease
+                }),
+            });
+            return Results.Ok(orders);
+        })
+        .RequireAuthorization()
+        .WithOpenApi();
+        // -- end of API "order" interactions --
+
         // -- API secure interactions --
         string register_endpoint = "/register";
         string login_endpoint = "/login";
@@ -158,7 +190,28 @@ class Program
 
         app.MapGet(register_endpoint, () => // handling GET request
         {
-            return Results.Ok(db.User_db);
+            var users = db.User_db
+            .Include(u => u.Orders)
+            .ThenInclude(o => o.Books)
+            .Select(u => new // organizing the output like this to prevent endless issues 
+            {
+                u.Id,
+                u.UserName,
+                u.Password,
+                Orders = u.Orders.Select(o => new
+                {
+                    o.Id,
+                    Books = o.Books.Select(b => new
+                    {
+                        b.Id,
+                        b.Title,
+                        b.Autor,
+                        b.DateOfRelease
+                    })
+                })
+            })
+            .ToList();
+            return Results.Ok(users);
         })
         .WithOpenApi();
 
@@ -187,7 +240,7 @@ class Program
         app.Run();
     }
 
-    static string GenerateToken(string username)
+    static string GenerateToken(string username) 
     {
         var claims = new[]
         {
@@ -207,19 +260,27 @@ class Program
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    static void DBDefault()
+    static void DBDefault() // this function completely reset the db
     {
-        using var book_db = new Books();
+        using var User_db = new Users();
 
         Console.WriteLine("Resetting the db...");
-        book_db.Database.EnsureDeleted();
-        book_db.Database.EnsureCreated();
+        User_db.Database.EnsureDeleted();
+        User_db.Database.EnsureCreated();
         Console.WriteLine("Inserting the default entries...");
-        book_db.Add(new Book("Animal Farm", "George Orwell", "17/08/1945"));
-        book_db.Add(new Book("1984", "George Orwell", "08/05/1949"));
-        book_db.SaveChanges(); // saving...
+        User_db.Add(new User("Alessandro", "03-AC-67-42-16-F3-E1-5C-76-1E-E1-A5-E2-55-F0-67-95-36-23-C8-B3-88-B4-45-9E-13-F9-78-D7-C8-46-F4", new List<Order> // password is "1234"
+        {
+            new Order(new List<Book> {
+                new Book("Animal Farm", "George Orwell", "17/08/1945"),
+                new Book("1984", "George Orwell", "08/05/1949")
+            }),
+            new Order(new List<Book> {
+                new Book("Epic Book", "Dr. Zheng", "19/12/2028")
+            })
+        }));
+        User_db.SaveChanges(); // saving...
     }
-    static string HashSha256(string s)
+    static string HashSha256(string s) // this convert to the hex hash with the algo "sha256"
     {
         byte[] hashbytes = SHA256.HashData(Encoding.UTF8.GetBytes(s));
         return BitConverter.ToString(hashbytes);
