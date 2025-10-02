@@ -3663,11 +3663,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\afiorini\\WORK\\es_7_orders_webapi\\es_7_orders_webapi.csproj",
+      "projectUniqueName": "C:\\Users\\afiorini\\WORK\\API_DB_proj-develop\\es_7_orders_webapi.csproj",
       "projectName": "es_7_orders_webapi",
-      "projectPath": "C:\\Users\\afiorini\\WORK\\es_7_orders_webapi\\es_7_orders_webapi.csproj",
+      "projectPath": "C:\\Users\\afiorini\\WORK\\API_DB_proj-develop\\es_7_orders_webapi.csproj",
       "packagesPath": "C:\\Users\\afiorini\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\afiorini\\WORK\\es_7_orders_webapi\\obj\\",
+      "outputPath": "C:\\Users\\afiorini\\WORK\\API_DB_proj-develop\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

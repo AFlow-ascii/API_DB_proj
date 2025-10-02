@@ -32,6 +32,20 @@ app.MapGet(endpoint, () => // handling GET request
     return Results.Ok(db.Customers_db);
 })
 .WithOpenApi();
+app.MapGet("/customers/{id:int}", (int id) => // handling GET "id" request
+{
+    try
+    {
+        var find = db.Customers_db.Find(id);
+        return Results.Ok(find);
+    }
+    catch (Exception e)
+    {
+        return Results.BadRequest($"User Error 404 not found! {e.ToString()}");
+    }
+})
+.WithOpenApi();
+
 app.MapPost(endpoint, (Customer customer) => // handling POST request
 {
     try
@@ -47,6 +61,7 @@ app.MapPost(endpoint, (Customer customer) => // handling POST request
 
 })
 .WithOpenApi();
+
 app.MapDelete("/customers/{id:int}", (int id) => // handling DELETE request
 {
     try
@@ -62,6 +77,7 @@ app.MapDelete("/customers/{id:int}", (int id) => // handling DELETE request
     }
 })
 .WithOpenApi();
+
 app.MapPut("/customers/{id:int}", (int id, Customer customer) => // handling PUT request
 {
     try
@@ -88,4 +104,5 @@ app.MapPut("/customers/{id:int}", (int id, Customer customer) => // handling PUT
     }
 })
 .WithOpenApi();
+
 app.Run();
