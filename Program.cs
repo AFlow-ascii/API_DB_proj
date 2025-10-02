@@ -9,15 +9,15 @@ using System.IdentityModel.Tokens.Jwt;
 
 class Program
 {
-    public static string secret_key = BitConverter.ToString(RandomNumberGenerator.GetBytes(256));
+    public static string secret_key = BitConverter.ToString(RandomNumberGenerator.GetBytes(256)); // Generating a secure random key for the JW tokens
     static void Main(string[] args)
     {
-        DBDefault();        // -- API SETTINGS -- 
+        // -- API SETTINGS -- 
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
+        // builder.Services.AddSwaggerGen();
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer( // this set up the JWT auth mode
             Options =>
             {
                 Options.TokenValidationParameters = new TokenValidationParameters
@@ -26,9 +26,9 @@ class Program
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = "crazydomain.com",
+                    ValidIssuer = "crazydomain.com", 
                     ValidAudience = "crazydomain.com",
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret_key))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret_key)) // take use of the secret key (generated before)
                 };
             }
         );
@@ -41,7 +41,7 @@ class Program
         app.UseAuthorization();
 
         // -- DB SETTINGS --
-        using var db = new Users();
+        using var db = new Users(); // all the DB is a "tree" that fall from the "user" table
         Console.WriteLine($"Inserting the db in '{db.path_db}'");
 
         // inserting the db entries
@@ -147,7 +147,6 @@ class Program
         string order_endpoint = "/orders";
         app.MapPost(order_endpoint, (Order order, string username) =>
         {
-
             var user = db.User_db.FirstOrDefault(u => u.UserName == username);
             user.Orders.Add(order);
 
@@ -260,7 +259,7 @@ class Program
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    static void DBDefault()
+    static void DBDefault() // this function completely reset the db
     {
         using var User_db = new Users();
 
@@ -280,7 +279,7 @@ class Program
         }));
         User_db.SaveChanges(); // saving...
     }
-    static string HashSha256(string s)
+    static string HashSha256(string s) // this convert to the hex hash with the algo "sha256"
     {
         byte[] hashbytes = SHA256.HashData(Encoding.UTF8.GetBytes(s));
         return BitConverter.ToString(hashbytes);
