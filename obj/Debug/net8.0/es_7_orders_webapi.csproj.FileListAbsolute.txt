@@ -318,3 +318,11 @@ C:\Users\afiorini\WORK\API_DB_proj-develop\obj\Debug\net8.0\refint\es_7_orders_w
 C:\Users\afiorini\WORK\API_DB_proj-develop\obj\Debug\net8.0\es_7_orders_webapi.pdb
 C:\Users\afiorini\WORK\API_DB_proj-develop\obj\Debug\net8.0\es_7_orders_webapi.genruntimeconfig.cache
 C:\Users\afiorini\WORK\API_DB_proj-develop\obj\Debug\net8.0\ref\es_7_orders_webapi.dll
+C:\Users\afiorini\WORK\API_DB_proj-develop\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\afiorini\WORK\API_DB_proj-develop\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\afiorini\WORK\API_DB_proj-develop\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\afiorini\WORK\API_DB_proj-develop\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\afiorini\WORK\API_DB_proj-develop\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\afiorini\WORK\API_DB_proj-develop\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\afiorini\WORK\API_DB_proj-develop\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\afiorini\WORK\API_DB_proj-develop\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll

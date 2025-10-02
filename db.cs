@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 public class Customers : DbContext
 {
     public DbSet<Customer> Customers_db { get; set; }
+    public DbSet<User> User_db { get; set; }
     public string path_db { get; }
 
     public Customers()
