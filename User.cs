@@ -10,7 +10,7 @@ public class User
         UserName = username;
         Password = password;
         Orders = orders;
-        foreach (var order in orders)
+        foreach (var order in orders) // this connect the user to all the orders
         {
             order.User = this;
         }

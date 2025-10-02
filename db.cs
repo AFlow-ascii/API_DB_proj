@@ -17,7 +17,7 @@ public class Users : DbContext
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={path_db}");
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder) // this is the relation configuration of the tables
     {
         modelBuilder.Entity<User>() // user can have more orders
         .HasMany(e => e.Orders)

@@ -8,8 +8,8 @@ public class Order
     public Order(List<Book> books)
     {
         Books = books;
-        foreach (var book in books)
-        {
+        foreach (var book in books) // this connect the order to all the books
+        { 
             book.Order = this;
         }
     }

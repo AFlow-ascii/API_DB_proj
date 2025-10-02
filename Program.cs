@@ -158,7 +158,7 @@ class Program
         {
             var orders = db.Order_db
             .Include(o => o.Books)
-            .Select(o => new
+            .Select(o => new // organizing the output like this to prevent endless issues
             {
                 o.Id,
                 Books = o.Books.Select(b => new
@@ -173,6 +173,7 @@ class Program
         })
         .RequireAuthorization()
         .WithOpenApi();
+        // -- end of API "order" interactions --
 
         // -- API secure interactions --
         string register_endpoint = "/register";
@@ -192,7 +193,7 @@ class Program
             var users = db.User_db
             .Include(u => u.Orders)
             .ThenInclude(o => o.Books)
-            .Select(u => new
+            .Select(u => new // organizing the output like this to prevent endless issues 
             {
                 u.Id,
                 u.UserName,
