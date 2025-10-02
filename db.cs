@@ -1,13 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
-public class Books : DbContext
+public class Users : DbContext
 {
     public DbSet<Book> Book_db { get; set; }
     public DbSet<User> User_db { get; set; }
+    public DbSet<Order> Order_db { get; set; }
+
     public string path_db { get; }
 
-    public Books()
+    public Users()
     {
         var folder = Environment.SpecialFolder.LocalApplicationData;
         var path = Environment.GetFolderPath(folder);
@@ -15,4 +17,18 @@ public class Books : DbContext
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={path_db}");
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<User>() // user can have more orders
+        .HasMany(e => e.Orders)
+        .WithOne(e => e.User)
+        .HasForeignKey(e => e.User_id)
+        .HasPrincipalKey(e => e.Id);
+
+        modelBuilder.Entity<Order>() // order can have more books
+        .HasMany(e => e.Books)
+        .WithOne(e => e.Order)
+        .HasForeignKey(e => e.Order_id)
+        .HasPrincipalKey(e => e.Id);
+    }
 }
