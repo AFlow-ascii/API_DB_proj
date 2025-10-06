@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace API
 {
     class LoginApiEndpoint
@@ -5,13 +7,13 @@ namespace API
         public static void setLoginEndpoints(WebApplication app, Users db)
         {
             string login_endpoint = "/login";
-            app.MapPost(login_endpoint, (User user) => // handling POST request
+            app.MapPost(login_endpoint, async (User user) => // handling POST request
             {
                 try
                 {
                     user.Password = Classes.Security.HashArgon2(user.Password);
 
-                    var found = db.User_db.Any(u => u.UserName == user.UserName && u.Password == user.Password);
+                    var found = await db.User_db.AnyAsync(u => u.UserName == user.UserName && u.Password == user.Password);
                     if (!found)
                     {
                         throw new Exception("Invalid Password!");

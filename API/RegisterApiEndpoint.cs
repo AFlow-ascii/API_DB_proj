@@ -6,11 +6,11 @@ namespace API
         public static void setRegisterEndpoints(WebApplication app, Users db)
         {
             string register_endpoint = "/register";
-            app.MapPost(register_endpoint, (User user) => // handling POST request
+            app.MapPost(register_endpoint, async (User user) => // handling POST request
             {
                 user.Password = Classes.Security.HashArgon2(user.Password);
-                db.Add(user);
-                db.SaveChanges();
+                await db.AddAsync(user);
+                await db.SaveChangesAsync();
                 return Results.Ok("User inserted succesfully!");
             })
             .WithOpenApi();

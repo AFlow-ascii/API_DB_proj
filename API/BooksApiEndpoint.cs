@@ -26,12 +26,12 @@ namespace API
             .RequireAuthorization()
             .WithOpenApi();
 
-            app.MapPost(book_endpoint, (Book book) => // handling POST request
+            app.MapPost(book_endpoint, async (Book book) => // handling POST request
             {
                 try
                 {
-                    db.Add(book);
-                    db.SaveChanges();
+                    await db.AddAsync(book);
+                    await db.SaveChangesAsync();
                     return Results.Ok("book inserted succesfully!");
                 }
                 catch (Exception e)
@@ -43,13 +43,13 @@ namespace API
             .RequireAuthorization()
             .WithOpenApi();
 
-            app.MapDelete("/books/{id:int}", (int id) => // handling DELETE request
+            app.MapDelete("/books/{id:int}", async (int id) => // handling DELETE request
             {
                 try
                 {
-                    var find = db.Book_db.Find(id);
+                    var find = await db.Book_db.FindAsync(id);
                     db.Book_db.Remove(find);
-                    db.SaveChanges();
+                    await db.SaveChangesAsync();
                     return Results.Ok("book deleted succesfully!");
                 }
                 catch (Exception e)
@@ -60,11 +60,11 @@ namespace API
             .RequireAuthorization()
             .WithOpenApi();
 
-            app.MapPut("/books/{id:int}", (int id, Book book) => // handling PUT request
+            app.MapPut("/books/{id:int}", async (int id, Book book) => // handling PUT request
             {
                 try
                 {
-                    var find = db.Book_db.Find(id);
+                    var find = await db.Book_db.FindAsync(id);
                     if (book.Title != null)
                     {
                         find.Title = book.Title;
@@ -77,7 +77,7 @@ namespace API
                     {
                         find.DateOfRelease = book.DateOfRelease;
                     }
-                    db.SaveChanges();
+                    await db.SaveChangesAsync();
                     return Results.Ok("book updated succesfully!");
                 }
                 catch (Exception e)

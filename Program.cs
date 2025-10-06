@@ -3,10 +3,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 /*
 Todo:
-- Insert a stronger Hashing algorithm || dotnet add package Konscious.Security.Cryptography.Argon2 --version 1.3.1 || -----
 - Sec, insert some more secure stuffs -> controls ecc
-- Dump(API ENDPOINT) -> dump all the db?
-- subdivide the code in classes 
 - Reinvent in ASYNC
 */
 class Program
@@ -68,7 +65,7 @@ class Program
         app.Run();
     }
 
-    static void DBDefault() // this function completely reset the db
+    async static void DBDefault() // this function completely reset the db
     {
         using var User_db = new Users();
 
@@ -86,6 +83,6 @@ class Program
                 new Book("Epic Book", "Dr. Zheng", "19/12/2028")
             })
         }));
-        User_db.SaveChanges(); // saving...
+        await User_db.SaveChangesAsync(); // saving...
     }
 }
