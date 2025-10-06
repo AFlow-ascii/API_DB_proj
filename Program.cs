@@ -1,11 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-/*
-Todo:
-- Sec, insert some more secure stuffs -> controls ecc
-- Reinvent in ASYNC
-*/
+
 class Program
 {
     static void Main(string[] args)
