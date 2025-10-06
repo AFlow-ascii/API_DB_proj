@@ -16,3 +16,4 @@ public class User
         }
     }
 }
+// Example of "Register" for user: {"username":"Paolo","password":"4321"}
