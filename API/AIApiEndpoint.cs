@@ -86,16 +86,14 @@ namespace API
                     db.Database.CloseConnection(); // close the runtime db
                     var results_string = JsonSerializer.Serialize(results);
                     
-                    Console.WriteLine(results_string);
                     return Results.Ok(results_string);
-
                 }
                 catch (Exception ex)
                 {
                     return Results.Problem($"Internal server error: {ex}");
                 }
             })
-            // .RequireAuthorization()
+            .RequireAuthorization()
             .WithOpenApi();
 
         }
