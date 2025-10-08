@@ -6,9 +6,9 @@ namespace API
         public static void setOrderEndpoints(WebApplication app, Users db)
         {
             string order_endpoint = "/orders";
-            app.MapPost(order_endpoint, async (Order order, string username) =>
+            app.MapPost(order_endpoint, async (Orders order, string username) =>
             {
-                var user = await db.User_db.FirstOrDefaultAsync(u => u.UserName == username);
+                var user = await db.User.FirstOrDefaultAsync(u => u.UserName == username);
                 user.Orders.Add(order);
 
                 return Results.Ok("Order inserted succesfully!");
@@ -18,7 +18,7 @@ namespace API
             
             app.MapGet(order_endpoint, () =>
             {
-                var orders = db.Order_db
+                var orders = db.Orders
                 .Include(o => o.Books)
                 .Select(o => new // organizing the output like this to prevent endless issues
                 {

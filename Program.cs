@@ -40,7 +40,7 @@ class Program
         Console.WriteLine($"Inserting the db in '{db.path_db}'");
 
         // inserting the db entries
-        if (!db.User_db.Any())
+        if (!db.User.Any())
         {
             DBDefault();
         }
@@ -57,28 +57,28 @@ class Program
         API.OrdersApiEndpoint.setOrderEndpoints(app, db);
         API.RegisterApiEndpoint.setRegisterEndpoints(app, db);
         API.LoginApiEndpoint.setLoginEndpoints(app, db);
-    
+        API.AIApiEndpoint.setAIEndpoints(app, db);
         app.Run();
     }
 
     async static void DBDefault() // this function completely reset the db
     {
-        using var User_db = new Users();
+        using var User = new Users();
 
         Console.WriteLine("Resetting the db...");
-        User_db.Database.EnsureDeleted();
-        User_db.Database.EnsureCreated();
+        User.Database.EnsureDeleted();
+        User.Database.EnsureCreated();
         Console.WriteLine("Inserting the default entries...");
-        User_db.Add(new User("Alessandro", Classes.Security.HashArgon2("1234"), new List<Order> 
+        User.Add(new User("Alessandro", Classes.Security.HashArgon2("1234"), new List<Orders> 
         {
-            new Order(new List<Book> {
+            new Orders(new List<Book> {
                 new Book("Animal Farm", "George Orwell", "17/08/1945"),
                 new Book("1984", "George Orwell", "08/05/1949")
             }),
-            new Order(new List<Book> {
+            new Orders(new List<Book> {
                 new Book("Epic Book", "Dr. Zheng", "19/12/2028")
             })
         }));
-        await User_db.SaveChangesAsync(); // saving...
+        await User.SaveChangesAsync(); // saving...
     }
 }

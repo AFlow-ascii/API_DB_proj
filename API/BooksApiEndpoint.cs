@@ -7,7 +7,7 @@ namespace API
             string book_endpoint = "/books";
             app.MapGet(book_endpoint, () => // handling GET request
             {
-                return Results.Ok(db.Book_db);
+                return Results.Ok(db.Book);
             })
             .RequireAuthorization()
             .WithOpenApi();
@@ -15,7 +15,7 @@ namespace API
             {
                 try
                 {
-                    var find = db.Book_db.Find(id);
+                    var find = db.Book.Find(id);
                     return Results.Ok(find);
                 }
                 catch (Exception e)
@@ -47,8 +47,8 @@ namespace API
             {
                 try
                 {
-                    var find = await db.Book_db.FindAsync(id);
-                    db.Book_db.Remove(find);
+                    var find = await db.Book.FindAsync(id);
+                    db.Book.Remove(find);
                     await db.SaveChangesAsync();
                     return Results.Ok("book deleted succesfully!");
                 }
@@ -64,7 +64,7 @@ namespace API
             {
                 try
                 {
-                    var find = await db.Book_db.FindAsync(id);
+                    var find = await db.Book.FindAsync(id);
                     if (book.Title != null)
                     {
                         find.Title = book.Title;

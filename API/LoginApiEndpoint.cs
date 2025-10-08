@@ -13,7 +13,7 @@ namespace API
                 {
                     user.Password = Classes.Security.HashArgon2(user.Password);
 
-                    var found = await db.User_db.AnyAsync(u => u.UserName == user.UserName && u.Password == user.Password);
+                    var found = await db.User.AnyAsync(u => u.UserName == user.UserName && u.Password == user.Password);
                     if (!found)
                     {
                         throw new Exception("Invalid Password!");
