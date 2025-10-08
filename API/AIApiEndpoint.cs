@@ -29,7 +29,7 @@ namespace API
                 var sysmsg = new
                 {
                     role = "system",
-                    content = "You are a database assistant and have to respond with ONLY the queries, this is all the db: " + db.GetDbScheme()// ottenere la struttura/schema del db
+                    content = "You are a database assistant and have to respond with ONLY the SQL queries, this is all the db scheme: " + db.GetDbScheme()// ottenere la struttura/schema del db
                 };
                 var usrmsg = new
                 { 
@@ -61,28 +61,38 @@ namespace API
                     var cmd = db.Database.GetDbConnection().CreateCommand(); // sending the query to the db
                     cmd.CommandText = content;
                     db.Database.OpenConnection();
-                    var reader = cmd.ExecuteReader(); // running the query
 
                     var results = new List<Dictionary<string, object>>(); // getting the response in dict entries
-                    while (reader.Read()) // read all the response
-                    {
-                        var row = new Dictionary<string, object>(); 
-                        for (int i = 0; i < reader.FieldCount; i++)
-                        {
-                            var rawcolumname = reader.GetName(i);
-                            
-                            var columnName = rawcolumname // polishing the response
-                                .Replace("(", "")
-                                .Replace(")", "")
-                                .Replace("*", "all")
-                                .Replace(" ", "_")
-                                .ToLowerInvariant();
 
-                            var value = reader.IsDBNull(i) ? null : reader.GetValue(i); // null values can exists
-                            row[columnName] = value; 
-                        }
-                        results.Add(row);
+                    if (content.TrimStart().StartsWith("INSERT"))
+                    {
+                        var writer = cmd.ExecuteNonQuery();
+                        return Results.Ok("Query inserted succesfully!");
                     }
+                    else
+                    {
+                        var reader = cmd.ExecuteReader();
+                        while (reader.Read()) // read all the response
+                        {
+                            var row = new Dictionary<string, object>();
+                            for (int i = 0; i < reader.FieldCount; i++)
+                            {
+                                var rawcolumname = reader.GetName(i);
+
+                                var columnName = rawcolumname // polishing the response
+                                    .Replace("(", "")
+                                    .Replace(")", "")
+                                    .Replace("*", "all")
+                                    .Replace(" ", "_")
+                                    .ToLowerInvariant();
+
+                                var value = reader.IsDBNull(i) ? null : reader.GetValue(i); // null values can exists
+                                row[columnName] = value;
+                            }
+                            results.Add(row);
+                        }
+                    }
+
                     db.Database.CloseConnection(); // close the runtime db
                     var results_string = JsonSerializer.Serialize(results);
                     
