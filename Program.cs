@@ -1,9 +1,13 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 class Program
 {
+
+    static string basedb = "C:\\Users\\afiorini\\AppData\\Local\\APIBook.db";
     static void Main(string[] args)
     {
         // -- API SETTINGS -- 
@@ -29,7 +33,6 @@ class Program
         );
         builder.Services.AddAuthorization();
 
-
         var app = builder.Build();
         // app.UseHttpsRedirection();
         app.UseAuthentication();
@@ -38,12 +41,7 @@ class Program
         // -- DB SETTINGS --
         using var db = new Users(); // all the DB is a "tree" that fall from the "user" table
         Console.WriteLine($"Inserting the db in '{db.path_db}'");
-
-        // inserting the db entries
-        if (!db.User.Any())
-        {
-            DBDefault();
-        }
+        checkDBIntegrity(basedb);
 
         app.MapPost("/resetdb", () =>
         {
@@ -59,6 +57,11 @@ class Program
         API.LoginApiEndpoint.setLoginEndpoints(app, db);
         API.AIApiEndpoint.setAIEndpoints(app, db);
         app.Run();
+
+        db.Database.GetDbConnection().Close();
+        db.Dispose();
+
+        Classes.Security.CryptDB(basedb);
     }
 
     async static void DBDefault() // this function completely reset the db
@@ -69,7 +72,7 @@ class Program
         User.Database.EnsureDeleted();
         User.Database.EnsureCreated();
         Console.WriteLine("Inserting the default entries...");
-        User.Add(new User("Alessandro", Classes.Security.HashArgon2("1234"), new List<Orders> 
+        User.Add(new User("Alessandro", Classes.Security.HashArgon2("1234"), new List<Orders>
         {
             new Orders(new List<Book> {
                 new Book("Animal Farm", "George Orwell", "17/08/1945"),
@@ -80,5 +83,34 @@ class Program
             })
         }));
         await User.SaveChangesAsync(); // saving...
+    }
+    
+    static void checkDBIntegrity(string basedb)
+    {
+        if (!File.Exists(basedb))
+        {
+            Console.WriteLine("Missing DB... \nCreating the DB");
+            ProcessStartInfo p1 = new ProcessStartInfo("cmd.exe", "/c dotnet ef migrations add InitialCreate");
+            ProcessStartInfo p2 = new ProcessStartInfo("cmd.exe", "/c dotnet ef database update");
+            p1.CreateNoWindow = true;
+            p2.CreateNoWindow = true;
+            Process.Start(p1).WaitForExit();
+            Process.Start(p2).WaitForExit();
+            DBDefault();
+            Console.WriteLine("DB Created");
+            return;
+        }
+
+        if (File.ReadAllText(basedb) == "") // C:\Users\afiorini\AppData\Local\APIBook.db
+        {
+            // creating the db
+            Console.WriteLine("Empty db found!");
+            DBDefault();
+        }
+        else
+        {
+            // decrypt the db
+            Classes.Security.DecryptDb(basedb);
+        }
     }
 }

@@ -7,6 +7,7 @@ namespace API
             string book_endpoint = "/books";
             app.MapGet(book_endpoint, () => // handling GET request
             {
+                Console.WriteLine("Someone want to steal the books D:");
                 return Results.Ok(db.Book);
             })
             .RequireAuthorization()
@@ -15,11 +16,15 @@ namespace API
             {
                 try
                 {
-                    var find = db.Book.Find(id);
-                    return Results.Ok(find);
+                    if (db.Book.Find(id) != null)
+                    {
+                        return Results.Ok(db.Book.Find(id));
+                    }
+                    else throw new Exception("can't find book");
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine("nah bro");
                     return Results.BadRequest($"book Error 404 not found! {e.ToString()}");
                 }
             })

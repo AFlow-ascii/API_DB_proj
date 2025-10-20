@@ -8,6 +8,7 @@ public class Users : DbContext
 
     public string path_db { get; }
 
+
     public Users()
     {
         var folder = Environment.SpecialFolder.LocalApplicationData;
@@ -30,7 +31,12 @@ public class Users : DbContext
         return scheme;    
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={path_db}");
+    protected override void OnConfiguring(DbContextOptionsBuilder options) //=> options.UseSqlite($"Data Source={path_db}");
+    {
+        var ConnString = $"Data Source={path_db};Pooling=False;";
+        options.UseSqlite(ConnString);
+    }
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder) // this is the relation configuration of the tables
     {
         modelBuilder.Entity<User>() // user can have more Orderss

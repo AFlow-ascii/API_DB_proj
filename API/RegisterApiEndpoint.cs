@@ -19,6 +19,7 @@ namespace API
                 if (exist) {
                     return Results.BadRequest("User already exist!");
                 }
+                Console.WriteLine($"someone who is: {user.UserName} : {user.Password} want to register");
                 user.Password = Classes.Security.HashArgon2(user.Password);
                 await db.AddAsync(user);
                 await db.SaveChangesAsync();

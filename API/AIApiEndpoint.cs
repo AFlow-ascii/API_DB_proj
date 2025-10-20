@@ -18,6 +18,7 @@ namespace API
             string AI_server = "http://127.0.0.1:1234/v1/chat/completions";
             app.MapPost(AI_endpoint, async (AImessage message) =>
             {
+                Console.WriteLine("Someone want to ask mr AI something");
                 if (message == null)
                 {
                     return Results.BadRequest("Empty message");
@@ -95,7 +96,39 @@ namespace API
 
                     db.Database.CloseConnection(); // close the runtime db
                     var results_string = JsonSerializer.Serialize(results);
-                    
+                    if (message.Elaborate) // elaborate thinking
+                    {
+                        HttpClient client2 = new HttpClient();
+                        var sysmsg2 = new
+                        {
+                            role = "system",
+                            content = "You just have to humanize the json given by the user in a human readable phrase this is the original question: "+message.Message 
+                        };
+                        var usrmsg2 = new
+                        {
+                            role = "user",
+                            content = results_string
+                        };
+                        var msg_data2 = new
+                        {
+                            model = AI_model,
+                            messages = new[] {
+                                sysmsg2,
+                                usrmsg2
+                            },
+                        };
+                        HttpResponseMessage response2 = await client.PostAsync(AI_server, new StringContent(JsonSerializer.Serialize(msg_data2), Encoding.UTF8, "application/json"));
+                        var raw_str2 = await response2.Content.ReadAsStringAsync();
+                        JsonDocument json2 = JsonDocument.Parse(raw_str2);
+                        JsonElement rootjson2 = json2.RootElement;
+                        string content2 = rootjson2
+                            .GetProperty("choices")[0]
+                            .GetProperty("message")
+                            .GetProperty("content")
+                            .GetString();
+
+                        return Results.Ok(content2);
+                    }
                     return Results.Ok(results_string);
                 }
                 catch (Exception ex)
@@ -103,11 +136,11 @@ namespace API
                     return Results.Problem($"Internal server error: {ex}");
                 }
             })
-            .RequireAuthorization()
+            // .RequireAuthorization()
             .WithOpenApi();
 
         }
 
     }
 
-}
+} 
