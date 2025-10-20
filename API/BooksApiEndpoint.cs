@@ -15,8 +15,11 @@ namespace API
             {
                 try
                 {
-                    var find = db.Book.Find(id);
-                    return Results.Ok(find);
+                    if (db.Book.Find(id) != null)
+                    {
+                        return Results.Ok(db.Book.Find(id));
+                    }
+                    else throw new Exception("can't find book");
                 }
                 catch (Exception e)
                 {
