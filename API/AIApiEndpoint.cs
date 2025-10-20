@@ -18,7 +18,6 @@ namespace API
             string AI_server = "http://127.0.0.1:1234/v1/chat/completions";
             app.MapPost(AI_endpoint, async (AImessage message) =>
             {
-                Console.WriteLine("Someone want to ask mr AI something");
                 if (message == null)
                 {
                     return Results.BadRequest("Empty message");

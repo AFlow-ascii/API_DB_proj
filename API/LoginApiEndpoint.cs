@@ -18,7 +18,6 @@ namespace API
                     {
                         throw new Exception("Invalid Password!");
                     }
-                    Console.WriteLine($"someone who is: {user.UserName} : {user.Password} want to login");
                     var token = Classes.Security.GenerateToken(user.UserName);
                     return Results.Ok(token);
                 }
